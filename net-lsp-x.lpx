@@ -13,9 +13,15 @@
 #    请只把下面 [Argument] 整段合并进去，并在原有 [Script] 行末尾补上
 #    argument=[{SERVER_DNS},{DNS},...]，不要两个插件同时启用。
 #
-# 2) script-path 默认用相对路径 net-lsp-x.js（脚本与本插件同目录时有效）。
-#    如果脚本放在别处（例如 GitHub），改成完整 URL：
-#    script-path = https://raw.githubusercontent.com/用户名/仓库/main/net-lsp-x.js
+# 2) script-path 用 jsDelivr 绝对地址，插件单独导入即可自动拉取脚本，
+#    不需要把 .js 与 .lpx 放在同一目录，也不会再出现「导入后脚本为空」。
+#
+#    主源：https://cdn.jsdelivr.net/gh/zeevyan/loon@main/net-lsp-x.js
+#    备源（改了脚本想立刻生效时换成它）：
+#          https://raw.githubusercontent.com/zeevyan/loon/main/net-lsp-x.js
+#
+#    注意：jsDelivr 对 @main 有约 12 小时缓存，脚本更新后不会立刻生效。
+#    刚改完脚本要马上看到效果，就把 [Script] 里的地址临时换成 raw 备源。
 #
 # 3) 本插件是纯脚本插件，不需要 [Mitm] / [Rewrite]。
 # ─────────────────────────────────────────────────────────────
@@ -49,8 +55,8 @@ ENTRANCE_DELAY = input,"0",tag=入口查询延迟秒
 EVENT_DELAY = input,"3",tag=网络变化延迟秒
 
 [Script]
-# 长按节点 / 策略组触发的通用脚本
-generic script-path=net-lsp-x.js,tag=网络信息,img-url=network,timeout=30,enable=true,argument=[{SERVER_DNS},{DNS},{ORG},{ASN},{MASK},{PRIVACY},{NOTIFY},{IPV6},{TIMEOUT},{RETRIES},{RETRY_DELAY},{ENTRANCE_DELAY},{EVENT_DELAY}]
+# 长按节点 / 策略组触发的通用脚本（绝对地址，导入即用）
+generic script-path=https://cdn.jsdelivr.net/gh/zeevyan/loon@main/net-lsp-x.js,tag=网络信息,img-url=network,timeout=30,enable=true,argument=[{SERVER_DNS},{DNS},{ORG},{ASN},{MASK},{PRIVACY},{NOTIFY},{IPV6},{TIMEOUT},{RETRIES},{RETRY_DELAY},{ENTRANCE_DELAY},{EVENT_DELAY}]
 
 # 新版语法（Loon 3.5.1 (983)+）等价写法，二选一，不要同时启用：
-# generic then script("net-lsp-x.js") with tag="网络信息", img_url="network", timeout=30
+# generic then script("https://cdn.jsdelivr.net/gh/zeevyan/loon@main/net-lsp-x.js") with tag="网络信息", img_url="network", timeout=30
