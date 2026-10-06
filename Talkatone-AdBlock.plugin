@@ -1,0 +1,110 @@
+#!name = Talkatone 去广告
+#!desc = 拦截 Talkatone(im.talkme.talkmeim) 内的广告与广告竞价流量：AdMob / InMobi / Smadex / Smaato / Fyber(InnerActive) / PubMatic / Amazon APS / PubNative / MobileFuse / Bidswitch 等
+#!author = zeev
+#!icon = https://raw.githubusercontent.com/Koolson/Qure/master/IconSet/Color/Ad_Block.png
+#!system = iOS,iPadOS
+#!tag = 广告,工具
+#!type = normal
+#!loon_version = 3.5.0(969)
+#
+# ══════════════════════════════════════════════════════════════════════════
+# 说明
+#
+# 本插件基于 2026-10-06 的 Loon 抓包（Talkatone 7.1.5 / im.talkme.talkmeim）整理。
+# 抓包中 Talkatone 自身（User-Agent = talkmeim/7912）触达的广告域名全部收录如下，
+# 并在每个域名后标注了抓包中实际出现的子域，方便日后核对。
+#
+# · 纯 [Rule] 域名拦截，REJECT 立即返回空响应，不需要 [Mitm]，不需要装证书，
+#   不依赖任何脚本，任何较新的 Loon 版本都能直接用。
+# · 只拦广告域名，不碰 Talkatone 的通话/短信链路（SIP / RTP 走 UDP，不受影响）。
+#
+# ⚠️ 已知副作用（重要）：
+#   1) Talkatone 的「看广告领免费分钟数 / 解锁奖励」功能会失效——广告加载不出来，
+#      自然也就拿不到奖励。想保留该功能请勿启用本插件。
+#   2) 广告位可能残留空白区域或占位图，这是 App 侧的正常表现。
+#   3) 若开启后 App 出现启动异常，先禁用插件重启 App 排除干扰。
+#
+# 抓包中已明确归属为「其它 App（公考雷达 GKLD）」的域名（穿山甲 pangolin-sdk-toutiao*、
+# sdk.e.qq.com、anythinktech.com、statisticslinks.com、umeng.com、bugly.qq.com、
+# jpush.cn、gongkaoleida.com、funlinkads.com、gameley.com、aliyuncs.com 等）
+# 一律未收录，避免误伤。
+# ══════════════════════════════════════════════════════════════════════════
+
+[Rule]
+
+# ────────────── Google AdMob / Google Ad Manager（Talkatone 主力广告）──────────────
+# 抓包实测：googleads.g.doubleclick-cn.net、adclick.g.doubleclick-cn.net、
+#           pubads.g.doubleclick-cn.net、pagead2.googlesyndication.com、
+#           pagead2.googlesyndication-cn.com、tpc.googlesyndication-cn.com、
+#           www.googletagservices-cn.com、www.gstatic.cn/mysidia/*
+DOMAIN-SUFFIX,doubleclick.net,REJECT
+DOMAIN-SUFFIX,doubleclick-cn.net,REJECT
+DOMAIN-SUFFIX,googlesyndication.com,REJECT
+DOMAIN-SUFFIX,googlesyndication-cn.com,REJECT
+DOMAIN-SUFFIX,googletagservices.com,REJECT
+DOMAIN-SUFFIX,googletagservices-cn.com,REJECT
+DOMAIN-SUFFIX,googleadservices.com,REJECT
+DOMAIN-SUFFIX,2mdn.net,REJECT
+
+# ────────────── InMobi ──────────────
+# 抓包实测：ads.inmobi.com、et-eus.w.inmobi.com、unif-id.ssp.inmobi.com、
+#           supply.inmobicdn.net
+DOMAIN-SUFFIX,inmobi.com,REJECT
+DOMAIN-SUFFIX,inmobicdn.net,REJECT
+
+# ────────────── Smadex（横幅 + 640x360 激励视频）──────────────
+# 抓包实测：creatives.smadex.com、statics.smadex.com、static-content-1.smadex.com、
+#           br-trk.smadex.com、pixel-ed.smadex.com、cr-err.smadex.com、va-trk.smadex.com
+DOMAIN-SUFFIX,smadex.com,REJECT
+
+# ────────────── Smaato（320x50 横幅 + 原生广告）──────────────
+# 抓包实测：sdk-dnt.ad.smaato.net、sdk-hb-cfg.smaato.net、sdk-files.smaato.net
+DOMAIN-SUFFIX,smaato.net,REJECT
+DOMAIN-SUFFIX,smaato.com,REJECT
+
+# ────────────── Fyber / InnerActive（Digital Turbine）──────────────
+# 抓包实测：wv.inner-active.mobi、cdn2.inner-active.mobi
+DOMAIN-SUFFIX,inner-active.mobi,REJECT
+DOMAIN-SUFFIX,inner-active.com,REJECT
+DOMAIN-SUFFIX,fyber.com,REJECT
+
+# ────────────── PubMatic OpenWrap（header bidding）──────────────
+# 抓包实测：ow.pubmatic.com、t.pubmatic.com、st.pubmatic.com、ads.pubmatic.com
+DOMAIN-SUFFIX,pubmatic.com,REJECT
+
+# ────────────── Amazon Ads（APS / Mobile Ads SDK）──────────────
+# 抓包实测：c.amazon-adsystem.com、mdtb-cf-1.ads.aps.amazon-adsystem.com
+DOMAIN-SUFFIX,amazon-adsystem.com,REJECT
+
+# ────────────── PubNative ──────────────
+# 抓包实测：got.iad3rs0zonea.pubnative.net
+DOMAIN-SUFFIX,pubnative.net,REJECT
+
+# ────────────── MobileFuse ──────────────
+# 抓包实测：mfx.mobilefuse.com、cdn.mobilefuse.com
+DOMAIN-SUFFIX,mobilefuse.com,REJECT
+
+# ────────────── Bidswitch（广告竞价交换）──────────────
+# 抓包实测：use-gce-sc.r.bidswitch.net
+DOMAIN-SUFFIX,bidswitch.net,REJECT
+
+# ────────────── Reims（广告素材 CDN）──────────────
+# 抓包实测：cdn.reims-serving.com
+DOMAIN-SUFFIX,reims-serving.com,REJECT
+
+# ────────────── spadsync（广告 ID 同步）──────────────
+# 抓包实测：spadsync.com/sync?ssphost=talkatone_app
+DOMAIN-SUFFIX,spadsync.com,REJECT
+
+# ────────────── ODM SDK（app-ads-services）──────────────
+# 抓包实测：odf.app-ads-services.com、muf.app-ads-services.com
+#           （请求参数带 bundle_id=im.talkme.talkmeim）
+DOMAIN-SUFFIX,app-ads-services.com,REJECT
+
+# ────────────── 以下为「可选」，默认关闭 ──────────────
+# 与广告无关，属统计/归因类；想更干净可自行取消注释。
+# 注意：app-ads-services 之外的 app-analytics-services.com 是 Apple 的
+#      AdServices（苹果搜索广告归因）接口，不是第三方广告，默认不动。
+# DOMAIN-SUFFIX,firebaselogging-pa.googleapis.com,REJECT
+# DOMAIN-SUFFIX,checkip.amazonaws.com,REJECT
+# DOMAIN-SUFFIX,app-analytics-services.com,REJECT
