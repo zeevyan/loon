@@ -1,0 +1,56 @@
+#!name = 网络信息 𝕏
+#!desc = 显示当前网络、入口节点与落地节点的运营商信息；节点域名可用指定 DNS 解析
+#!author = zeev
+#!icon = network
+#!system = iOS,iPadOS,macOS
+#!tag = 网络,工具
+#!type = normal
+#
+# ─────────────────────────────────────────────────────────────
+# 用法说明
+#
+# 1) 本文件是「独立可用」的完整插件。若你已有一个正在跑的 net-lsp-x 插件，
+#    请只把下面 [Argument] 整段合并进去，并在原有 [Script] 行末尾补上
+#    argument=[{SERVER_DNS},{DNS},...]，不要两个插件同时启用。
+#
+# 2) script-path 默认用相对路径 net-lsp-x.js（脚本与本插件同目录时有效）。
+#    如果脚本放在别处（例如 GitHub），改成完整 URL：
+#    script-path = https://raw.githubusercontent.com/用户名/仓库/main/net-lsp-x.js
+#
+# 3) 本插件是纯脚本插件，不需要 [Mitm] / [Rewrite]。
+# ─────────────────────────────────────────────────────────────
+
+[Argument]
+# ══════════ 节点域名解析 DNS（核心）══════════
+# 解析「节点服务器域名」时用哪个 DNS。留空时的顺序：
+#   Loon 默认 DNS（若返回 Fake IP 会被丢弃）→ 第三方接口
+# 想和 Loon 连接节点时用同一个 DNS，就把订阅里 server-dns 的值抄过来。
+# 注意：这是 $dns.query 的单次查询覆盖，不会改动 Loon 的全局 DNS 列表。
+SERVER_DNS = input,"",tag=节点DNS,desc=解析节点域名用，填订阅里的 server-dns 值，如 223.5.5.5，可留空
+
+# ══════════ 兜底解析接口 ══════════
+# 前面的 DNS 都拿不到真实 IP 时才会用到。可填 ali / tencent / cf / google，
+# 也可以直接填 IP（223.5.5.5）或 DoH 地址（https://dns.alidns.com/dns-query）。
+DNS = input,"",tag=兜底DNS,desc=ali / tencent / cf / google，或直接填 IP 或 DoH 地址，可留空
+
+# ══════════ 显示开关 ══════════
+ORG = switch,false,tag=显示组织
+ASN = switch,false,tag=显示ASN
+MASK = switch,false,tag=IP打码
+PRIVACY = switch,false,tag=隐藏敏感信息
+NOTIFY = switch,false,tag=显示通知
+IPV6 = switch,false,tag=显示IPv6
+
+# ══════════ 超时与重试 ══════════
+TIMEOUT = input,"5",tag=超时秒数
+RETRIES = input,"1",tag=重试次数
+RETRY_DELAY = input,"1",tag=重试间隔秒
+ENTRANCE_DELAY = input,"0",tag=入口查询延迟秒
+EVENT_DELAY = input,"3",tag=网络变化延迟秒
+
+[Script]
+# 长按节点 / 策略组触发的通用脚本
+generic script-path=net-lsp-x.js,tag=网络信息,img-url=network,timeout=30,enable=true,argument=[{SERVER_DNS},{DNS},{ORG},{ASN},{MASK},{PRIVACY},{NOTIFY},{IPV6},{TIMEOUT},{RETRIES},{RETRY_DELAY},{ENTRANCE_DELAY},{EVENT_DELAY}]
+
+# 新版语法（Loon 3.5.1 (983)+）等价写法，二选一，不要同时启用：
+# generic then script("net-lsp-x.js") with tag="网络信息", img_url="network", timeout=30
